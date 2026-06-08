@@ -1,0 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+@import 'tailwindcss';
+
+@theme {
+    --font-poppins: 'Poppins', sans-serif;
+
+    --color-theme-brand: #6349ea;
+    --color-theme-brand-light: #875fe0;
+    --color-theme-brand-pale: #c292ff;
+
+    --color-theme-bg: #f4f4f4;
+    --color-theme-card: #ffffff;
+    --color-theme-extra-light: #fcfcfc;
+
+    --color-theme-border: #e1e2e3;
+    --color-theme-border-soft: #e5e7eb;
+
+    --color-theme-success: #19a874;
+    --color-theme-success-light: #e4f7f3;
+
+    --color-theme-error: #ef4444;
+    --color-theme-error-light: #fee2e2;
+
+    --color-theme-info: #0099ff;
+    --color-theme-info-light: #eff6fe;
+
+    --color-theme-text-main: #374151;
+    --color-theme-text-dark: #242424;
+    --color-theme-text-muted: #898989;
+
+    --color-theme-navy: #0d0c27;
+    --color-theme-dark-navy: #15142e;
+}
+
+/* Global resets and typography overrides */
+html,
+body,
+#main {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+    box-sizing: border-box !important;
+    -webkit-font-smoothing: inherit !important;
+}
+
+body,
+input,
+textarea,
+select,
+button {
+    font-family: var(--font-poppins) !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+figure {
+    margin: 0;
+}
