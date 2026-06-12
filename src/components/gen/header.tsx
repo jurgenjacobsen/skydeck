@@ -12,15 +12,15 @@ import {
     Info,
     Calendar,
     X,
+    ChevronRightIcon,
 } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 
 export default function Header() {
     return (
         <header className="h-14 bg-theme-card border-b border-theme-border flex items-center justify-between px-6 shrink-0 z-10 select-none">
             {/* Path / Section indicator */}
-            <div className="">
-                {"{LOCATION}"}
-            </div>
+            <Location />
 
             {/* Search Bar */}
             <SearchBar />
@@ -400,6 +400,29 @@ function User() {
                     <span className="font-medium group-hover:text-red-500">Log Out</span>
                 </a>
             </div>
+        </div>
+    );
+}
+
+function Location() {
+    const loc = useLocation();
+    
+    // Split the pathname and filter out empty segments
+    const segments = loc.pathname.split('/').filter(Boolean);
+    
+    // Default to 'Home' if the pathname is empty or root '/'
+    const pathSegments = segments.length > 0 ? segments : ['Home'];
+
+    return (
+        <div className="flex items-center gap-2 font-semibold text-theme-text-muted select-none tracking-wide">
+            {pathSegments.map((segment, index) => (
+                <div key={index} className="flex items-center gap-2 capitalize">
+                    <ChevronRightIcon className="w-4 h-4 text-theme-text-muted shrink-0" />
+                    <span className={index === pathSegments.length - 1 ? "text-theme-text-dark font-bold" : ""}>
+                        {segment}
+                    </span>
+                </div>
+            ))}
         </div>
     );
 }

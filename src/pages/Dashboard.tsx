@@ -1,13 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Flame, AlertTriangle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Flame } from 'lucide-react';
 
 interface DashboardProps {
     qStreak: number;
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ qStreak }) => {
-    const navigate = useNavigate();
 
     const [aerodrome, setAerodrome] = useState(() => {
         return localStorage.getItem('homebase_aerodrome') || 'EGLL';
