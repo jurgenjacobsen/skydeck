@@ -1,115 +1,96 @@
-import { useLocation, Link } from 'react-router-dom';
-import { LayoutDashboard, Calculator, BookOpen, Workflow, FileText } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { BookOpenIcon, FileTextIcon, GraduationCapIcon, HomeIcon, WorkflowIcon } from "lucide-react";
+import { Link } from "react-router-dom";
+
 import packageJson from '../../../package.json';
 
+const links = [
+    { name: 'Home', icon: HomeIcon, path: '/' },
+    { name: 'Q-Bank', icon: GraduationCapIcon, path: '/qbank' },
+    { name: 'Legislation', icon: BookOpenIcon, path: '/legislation' },
+    { name: 'Flows Trainer', icon: WorkflowIcon, path: '/flows' },
+    { name: 'Flight Briefing', icon: FileTextIcon, path: '/briefing' },
+]
+
 export default function Sidebar() {
-    const location = useLocation();
-    const pathname = location.pathname;
-    const activeTab = pathname.slice(1);
-
     return (
-        <aside className="w-60 border-r border-theme-border bg-theme-card flex flex-col justify-between shrink-0 select-none z-10">
+        <aside className="w-72 bg-theme-card border-r border-theme-border flex flex-col justify-between shrink-0 select-none">
             <div>
-                {/* Logo Brand */}
-                <div className="h-16 flex items-center gap-3 px-6 border-b border-theme-border">
-                    <div>
-                        <span className="text-xl font-black tracking-tight text-theme-text-dark">
-                            SKY<span className="text-theme-brand">DECK</span>
-                        </span>
-                    </div>
+                <div className="h-14 border-b border-theme-border flex items-center justify-center font-bold text-lg ">
+                    SKYDECK
                 </div>
-
-                {/* Navigation Links */}
-                <nav className="p-4 space-y-1 text-sm">
-                    <Link
-                        to="/dashboard"
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded transition-all text-left font-medium ${
-                            activeTab === 'dashboard'
-                                ? 'bg-theme-info-light text-theme-brand font-semibold'
-                                : 'text-theme-text-main hover:text-theme-text-dark hover:bg-theme-bg'
-                        }`}
-                    >
-                        <LayoutDashboard
-                            className={`w-4 h-4 ${activeTab === 'dashboard' ? 'text-theme-brand' : 'text-theme-text-muted'}`}
-                        />
-                        <span>Dashboard</span>
-                    </Link>
-
-                    <Link
-                        to="/qbank"
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded transition-all text-left font-medium ${
-                            activeTab === 'qbank'
-                                ? 'bg-theme-info-light text-theme-brand font-semibold'
-                                : 'text-theme-text-main hover:text-theme-text-dark hover:bg-theme-bg'
-                        }`}
-                    >
-                        <Calculator
-                            className={`w-4 h-4 ${activeTab === 'qbank' ? 'text-theme-brand' : 'text-theme-text-muted'}`}
-                        />
-                        <div className="flex-1 flex items-center justify-between">
-                            <span>ATPL Q-Bank</span>
-                        </div>
-                    </Link>
-
-                    <Link
-                        to="/wiki"
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded transition-all text-left font-medium ${
-                            activeTab === 'wiki'
-                                ? 'bg-theme-info-light text-theme-brand font-semibold'
-                                : 'text-theme-text-main hover:text-theme-text-dark hover:bg-theme-bg'
-                        }`}
-                    >
-                        <BookOpen
-                            className={`w-4 h-4 ${activeTab === 'wiki' ? 'text-theme-brand' : 'text-theme-text-muted'}`}
-                        />
-                        <span>Legislation Wiki</span>
-                    </Link>
-
-                    <Link
-                        to="/flows"
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded transition-all text-left font-medium ${
-                            activeTab === 'flows'
-                                ? 'bg-theme-info-light text-theme-brand font-semibold'
-                                : 'text-theme-text-main hover:text-theme-text-dark hover:bg-theme-bg'
-                        }`}
-                    >
-                        <Workflow
-                            className={`w-4 h-4 ${activeTab === 'flows' ? 'text-theme-brand' : 'text-theme-text-muted'}`}
-                        />
-                        <div className="flex-1 flex items-center justify-between">
-                            <span>Flows Trainer</span>
-                        </div>
-                    </Link>
-
-                    <Link
-                        to="/briefing"
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded transition-all text-left font-medium ${
-                            activeTab === 'briefing'
-                                ? 'bg-theme-info-light text-theme-brand font-semibold'
-                                : 'text-theme-text-main hover:text-theme-text-dark hover:bg-theme-bg'
-                        }`}
-                    >
-                        <FileText
-                            className={`w-4 h-4 ${activeTab === 'briefing' ? 'text-theme-brand' : 'text-theme-text-muted'}`}
-                        />
-                        <span>Flight Briefing</span>
-                    </Link>
-                </nav>
+                <div className="p-4 text-lg flex-col gap-1 flex">
+                    {links.map((link) => (
+                        <Link
+                            to={link.path}
+                            className="flex items-center gap-3 py-2 px-4 rounded font-medium hover:bg-theme-bg transition-all"
+                        >
+                            <link.icon size={18} className="text-theme-text-muted"/>
+                            {link.name}
+                        </Link>
+                    ))}
+                </div>
             </div>
-
-            {/* Sidebar Footer */}
-            <div className="p-4 border-t border-theme-border space-y-3">
-                <div className="flex items-center gap-3 bg-theme-extra-light p-3 rounded border border-theme-border">
-                    <div className="w-2 h-2 rounded-full bg-theme-success"></div>
-                    <div className="text-xs">
-                        <div className="font-semibold text-theme-text-dark">System Ready</div>
-                        <div className="text-theme-text-muted text-xs">All databases online</div>
-                    </div>
-                </div>
-                <div className="text-xs text-theme-text-muted text-center">
-                    SkyDeck EFB v{packageJson.version}
-                </div>
+            <div className="p-4 border-t border-theme-border flex flex-col items-center gap-4">
+                <Status />
+                <VersionInfo />
             </div>
         </aside>
+    );
+}
+
+function getSystemStatus() {
+    const minutes = new Date().getMinutes();
+    const cycleMinute = minutes % 25;
+
+    if (cycleMinute < 10) {
+        return {
+            type: 'online',
+            color: 'bg-green-500',
+            text: 'All systems operational'
+        };
+    } else if (cycleMinute < 20) {
+        return {
+            type: 'parcial',
+            color: 'bg-amber-500',
+            text: 'Partial system degradation'
+        };
+    } else {
+        return {
+            type: 'degraded',
+            color: 'bg-red-500',
+            text: 'System status degraded'
+        };
+    }
+}
+
+function Status() {
+    const [status, setStatus] = useState(() => getSystemStatus());
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setStatus(getSystemStatus());
+        }, 1000); // Update every second to reflect real-time minute transitions
+        return () => clearInterval(interval);
+    }, []);
+
+    if (!status) return null;
+    if (status.type === 'online') return null; // Don't show anything if all systems are operational
+
+    return (
+        <div className="flex items-center gap-2 bg-theme-bg px-4 py-2 rounded border border-theme-border">
+            <div className={"w-2 h-2 rounded-full " + status.color}>
+                <div className={"motion-safe:animate-ping-slow w-2 h-2 rounded-full " + status.color}/>
+            </div>
+            <span className="text-sm text-theme-text-secondary">{status.text}</span>
+        </div>
+    );
+}
+
+function VersionInfo() {
+    return (
+        <div className="text-theme-text-muted">
+            Version {packageJson.version}
+        </div>
     );
 }

@@ -1,16 +1,23 @@
-import { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 
-import Sidebar from './components/gen/sidebar';
-import Header from './components/gen/header';
+import Sidebar from '@/gen/sidebar';
+import Header from '@/gen/header';
 import Dashboard from './pages/Dashboard';
 import QBank from './pages/QBank';
-import Wiki from './pages/Wiki';
 import Flows from './pages/Flows';
 import Briefing from './pages/Briefing';
+import NotFound from './pages/NotFound';
 
-function App() {
-    const [searchQuery, setSearchQuery] = useState('');
+export default function App() { 
+
+    // CTRL + K = alert hello world
+    document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.key === 'k') {
+            e.preventDefault();
+            alert('CTRL + K pressed!');
+        }
+    });
+    
 
     return (
         <div className="min-h-screen bg-theme-bg flex overflow-hidden text-theme-text-main">
@@ -20,7 +27,7 @@ function App() {
             {/* 2. MAIN LAYOUT CONTAINER */}
             <div className="flex-1 flex flex-col h-screen overflow-hidden">
                 {/* TOP HEADER / NAVBAR */}
-                <Header searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+                <Header />
 
                 {/* 3. MAIN WORKSPACE */}
                 <main className="flex-1 overflow-y-auto bg-theme-bg p-8">
@@ -28,14 +35,13 @@ function App() {
                         <Route path="/" element={<Dashboard qStreak={14} />} />
                         <Route path="/dashboard" element={<Dashboard qStreak={14} />} />
                         <Route path="/qbank" element={<QBank qStreak={14} />} />
-                        <Route path="/wiki" element={<Wiki searchQuery={searchQuery} />} />
+                        
                         <Route path="/flows" element={<Flows />} />
                         <Route path="/briefing" element={<Briefing />} />
+                        <Route path="*" element={<NotFound />} />
                     </Routes>
                 </main>
             </div>
         </div>
     );
 }
-
-export default App;

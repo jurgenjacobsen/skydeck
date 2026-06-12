@@ -15,21 +15,11 @@
     --color-theme-border: #e1e2e3;
     --color-theme-border-soft: #e5e7eb;
 
-    --color-theme-success: #19a874;
-    --color-theme-success-light: #e4f7f3;
-
-    --color-theme-error: #ef4444;
-    --color-theme-error-light: #fee2e2;
-
-    --color-theme-info: #0099ff;
-    --color-theme-info-light: #eff6fe;
-
     --color-theme-text-main: #374151;
     --color-theme-text-dark: #242424;
     --color-theme-text-muted: #898989;
 
-    --color-theme-navy: #0d0c27;
-    --color-theme-dark-navy: #15142e;
+    --animate-ping-slow: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
 /* Global resets and typography overrides */
@@ -39,6 +29,7 @@ body,
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    font-size: 87.5%;
 }
 
 :root {
