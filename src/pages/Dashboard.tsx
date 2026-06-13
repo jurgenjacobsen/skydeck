@@ -139,7 +139,7 @@ const Dashboard: React.FC<DashboardProps> = ({ qStreak }) => {
                             Active Streak
                         </span>
                         <span className="flex items-center gap-1 text-xs text-amber-700 font-semibold">
-                            <Flame className="w-3 h-3 fill-amber-500 stroke-none" /> HOT
+                            <Flame className="w-4 h-4 fill-amber-500 stroke-none" /> HOT
                         </span>
                     </div>
                     <div className="mt-3 flex items-baseline gap-2">

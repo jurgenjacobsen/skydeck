@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import packageJson from '../../../package.json';
 
 const links = [
-    { name: 'Home', icon: HomeIcon, path: '/' },
+    { name: 'Home', icon: HomeIcon, path: '/home' },
     { name: 'Q-Bank', icon: GraduationCapIcon, path: '/qbank' },
     { name: 'Legislation', icon: BookOpenIcon, path: '/legislation' },
     { name: 'Flows Trainer', icon: WorkflowIcon, path: '/flows' },

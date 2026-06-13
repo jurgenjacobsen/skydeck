@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Routes, Route, useSearchParams } from 'react-router-dom';
+import { Routes, Route, useSearchParams, useLocation } from 'react-router-dom';
 
 import Sidebar from '@/gen/sidebar';
 import Header from '@/gen/header';
@@ -10,8 +10,11 @@ import Flows from './pages/Flows';
 import Briefing from './pages/Briefing';
 import Wiki from './pages/Wiki';
 import NotFound from './pages/NotFound';
+import Landing from './pages/Landing';
 
 export default function App() { 
+    const location = useLocation();
+
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [searchParams] = useSearchParams();
     const wikiQuery = searchParams.get('q') || '';
@@ -27,6 +30,10 @@ export default function App() {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, []);
 
+    if (location.pathname === '/') {
+        return <Landing />;
+    }
+
 
     return (
         <div className="min-h-screen bg-theme-bg flex overflow-hidden text-theme-text-main text-xs">
@@ -39,9 +46,8 @@ export default function App() {
                 <Header onSearchClick={() => setIsSearchOpen(true)} />
 
                 {/* 3. MAIN WORKSPACE */}
-                <main className="flex-1 overflow-y-auto bg-theme-bg p-8">
+                <main className="flex-1 overflow-y-auto bg-theme-bg p-6">
                     <Routes>
-                        <Route path="/" element={<Dashboard qStreak={14} />} />
                         <Route path="/dashboard" element={<Dashboard qStreak={14} />} />
                         <Route path="/qbank" element={<QBank qStreak={14} />} />
                         <Route path="/legislation" element={<Wiki searchQuery={wikiQuery} />} />
