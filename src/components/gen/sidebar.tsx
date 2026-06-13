@@ -16,10 +16,10 @@ export default function Sidebar() {
     return (
         <aside className="w-72 bg-theme-card border-r border-theme-border flex flex-col justify-between shrink-0 select-none">
             <div>
-                <div className="h-14 border-b border-theme-border flex items-center justify-center font-bold text-lg ">
+                <div className="h-14 border-b border-theme-border flex items-center justify-center font-bold text-lg">
                     SKYDECK
                 </div>
-                <div className="p-4 text-lg flex-col gap-1 flex">
+                <div className="p-4 text-sm flex-col gap-1 flex">
                     {links.map((link) => (
                         <Link
                             to={link.path}
@@ -82,14 +82,14 @@ function Status() {
             <div className={"w-2 h-2 rounded-full " + status.color}>
                 <div className={"motion-safe:animate-ping-slow w-2 h-2 rounded-full " + status.color}/>
             </div>
-            <span className="text-sm text-theme-text-secondary">{status.text}</span>
+            <span className="text-xs text-theme-text-secondary">{status.text}</span>
         </div>
     );
 }
 
 function VersionInfo() {
     return (
-        <div className="text-theme-text-muted">
+        <div className="text-theme-text-muted text-xs">
             Version {packageJson.version}
         </div>
     );

@@ -15,42 +15,72 @@ import {
     ChevronRightIcon,
 } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
+import DevPanel from './dev-panel';
 
-export default function Header() {
+export default function Header({ onSearchClick }: { onSearchClick?: () => void }) {
+    const [isDevPanelOpen, setIsDevPanelOpen] = useState(false);
+
     return (
-        <header className="h-14 bg-theme-card border-b border-theme-border flex items-center justify-between px-6 shrink-0 z-10 select-none">
+        <header className="h-14 bg-theme-card border-b border-theme-border grid grid-cols-3 gap-4 px-6 shrink-0 z-10 select-none text-xs">
             {/* Path / Section indicator */}
-            <Location />
+            <div className="flex items-center justify-between">
+                <Location />
+                <DevPanelButton onClick={() => setIsDevPanelOpen(true)} />
+            </div>
 
             {/* Search Bar */}
-            <SearchBar />
+            <div className="flex items-center justify-center w-full">
+                <SearchBar onClick={onSearchClick} />
+            </div>
 
             {/* Right Side Widgets */}
-            <div className="flex items-center">
+            <div className="flex items-center justify-end">
                 <Clock />
                 <Notifications />
                 <User />
             </div>
+            <DevPanel isOpen={isDevPanelOpen} onClose={() => setIsDevPanelOpen(false)} />
         </header>
     );
 }
 
-function SearchBar() {
+function DevPanelButton({ onClick }: { onClick?: () => void }) {
     return (
-        <div className="relative w-1/4 overflow-hidden">
+        <button
+            onClick={onClick}
+            className="px-4 py-1.5 rounded text-vs font-mono border border-red-300 bg-red-300/25 text-red-500 font-medium cursor-pointer hover:bg-red-300/50 transition-colors"
+        >
+            Dev Panel
+        </button>
+    );
+}
+
+function SearchBar({ onClick }: { onClick?: () => void }) {
+    return (
+        <div
+            onClick={onClick}
+            className="relative overflow-hidden cursor-pointer w-full"
+        >
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none ">
                 <SearchIcon className="w-4 h-4 text-theme-text-muted" />
             </div>
             <input
                 type="text"
+                readOnly
                 placeholder="Search..."
-                className="w-full pl-10 pr-22 py-1.5 rounded border border-theme-border bg-theme-bg text-sm focus:outline-none focus:ring-none focus:border-theme-brand transition-all"
+                className="w-full pl-10 pr-22 py-1.5 rounded border border-theme-border bg-theme-bg text-xs focus:outline-none focus:ring-none focus:border-theme-brand transition-all cursor-pointer pointer-events-none"
             />
-            <button className="absolute inset-y-0 right-0 flex items-center rounded m-1 px-4 text-xs text-theme-text-muted hover:text-theme-text-main cursor-pointer hover:bg-theme-extra-light transition-colors border border-transparent hover:border-theme-border">
+            <button
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onClick?.();
+                }}
+                className="absolute inset-y-0 right-0 flex items-center rounded m-1 px-2 text-vs font-mono bg-theme-card border border-theme-border text-theme-text-muted select-none font-semibold"
+            >
                 CTRL + K
             </button>
         </div>
-    )
+    );
 }
 
 interface Notification {
@@ -126,6 +156,13 @@ function Notifications() {
     }, [isOpen]);
 
     const unreadCount = notifications.filter((n) => !n.read).length;
+    const [prevUnreadCount, setPrevUnreadCount] = useState(unreadCount);
+
+    useEffect(() => {
+        if (unreadCount > 0) {
+            setPrevUnreadCount(unreadCount);
+        }
+    }, [unreadCount]);
 
     const toggleDropdown = () => setIsOpen(!isOpen);
 
@@ -180,12 +217,14 @@ function Notifications() {
                 aria-label="Notifications"
             >
                 <BellIcon size={18} className="text-theme-text-muted hover:text-theme-text-main transition-colors" />
-                {unreadCount > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-theme-error text-[9px] font-bold text-white shadow ring-2 ring-white">
-                        <span className="absolute inline-flex h-full w-full animate-ping-slow rounded-full bg-theme-error opacity-40"></span>
-                        <span className="relative">{unreadCount}</span>
-                    </span>
-                )}
+                <span className={`absolute top-0.5 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-vs font-bold text-white shadow ring-2 ring-white transition-all duration-300 ease-out origin-center ${
+                    unreadCount > 0
+                        ? 'scale-100 opacity-100'
+                        : 'scale-0 opacity-0 pointer-events-none'
+                }`}>
+                    <span className="absolute inline-flex h-full w-full animate-ping-slow rounded-full bg-red-500 opacity-40"></span>
+                    <span className="relative">{unreadCount > 0 ? unreadCount : prevUnreadCount}</span>
+                </span>
             </button>
 
             {/* Dropdown Card */}
@@ -196,10 +235,10 @@ function Notifications() {
             }`}>
                 {/* Header */}
                 <div className="flex items-center justify-between px-4 py-2 border-b border-theme-border bg-theme-extra-light">
-                    <div className="font-bold text-theme-text-dark text-sm flex items-center gap-2">
+                    <div className="text-theme-text-dark flex items-center gap-2 text-xs font-bold tracking-wide">
                         Notifications
                         {unreadCount > 0 && (
-                            <span className="bg-theme-brand/10 text-theme-brand px-2 py-1 rounded text-xs font-semibold">
+                            <span className="bg-theme-brand/5 text-theme-brand px-2 py-1 rounded text-vs font-medium">
                                 {unreadCount} new
                             </span>
                         )}
@@ -207,7 +246,7 @@ function Notifications() {
                     {unreadCount > 0 && (
                         <button
                             onClick={markAllAsRead}
-                            className="text-theme-brand hover:text-theme-brand-light font-medium cursor-pointer"
+                            className="text-theme-brand hover:text-theme-brand-light cursor-pointer font-medium text-vs"
                         >
                             Mark all as read
                         </button>
@@ -221,10 +260,10 @@ function Notifications() {
                             <div
                                 key={notification.id}
                                 onClick={() => markAsRead(notification.id)}
-                                className={`flex gap-3 px-4 py-3 transition-colors cursor-pointer relative group/item ${
+                                className={`flex gap-3 px-4 py-2 transition-colors cursor-pointer relative group/item ${
                                     notification.read
                                         ? 'hover:bg-theme-bg'
-                                        : 'bg-theme-info-light/30 hover:bg-theme-info-light/50'
+                                        : 'bg-theme-info-light/25 hover:bg-theme-info-light/50'
                                 }`}
                             >
                                 {/* Icon container */}
@@ -240,15 +279,15 @@ function Notifications() {
 
                                 {/* Content */}
                                 <div className="flex-1 min-w-0 pr-10 pl-2">
-                                    <div className="flex items-baseline gap-2">
+                                    <div className="flex items-baseline gap-2 mb-1">
                                         <span
-                                            className={`text-sm truncate font-semibold text-theme-text-dark ${
+                                            className={`text-xs truncate font-semibold text-theme-text-dark ${
                                                 !notification.read ? 'font-bold' : ''
                                             }`}
                                         >
                                             {notification.title} 
                                         </span>
-                                        <span className="text-theme-text-muted">
+                                        <span className="text-theme-text-muted text-vs">
                                             {notification.timestamp}
                                         </span>
                                     </div>
@@ -323,16 +362,16 @@ function Clock() {
         <div className="flex items-center gap-4 border-r border-theme-border px-4">
             {/* Local Time */}
             <div className="flex items-center gap-2">
-                <span className="text-xs uppercase font-bold text-theme-text-muted tracking-wider">LCL</span>
+                <span className="text-vs uppercase font-bold text-theme-text-muted tracking-wider">LCL</span>
                 <span className="text-theme-text-dark font-semibold font-mono tabular-nums">{localTimeStr}</span>
             </div>
             {/* Zulu Time */}
             <div className="flex items-center gap-2">
-                <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider">
-                    <span className="w-1.5 h-1.5 rounded-full bg-theme-brand"></span>
+                <span className="flex items-center gap-2 text-vs font-bold uppercase tracking-wider">
+                    <span className="w-1 h-1 rounded-full bg-theme-brand"></span>
                     UTC
                 </span>
-                <span className="tabular-nums font-mono ">{zuluTimeStr}Z</span>
+                <span className="tabular-nums font-mono">{zuluTimeStr}Z</span>
             </div>
         </div>
     );
@@ -340,16 +379,15 @@ function Clock() {
 
 function User() {
     return (
-        <div className="relative group flex items-center gap-3 cursor-pointer py-1.5 px-2 rounded-lg hover:bg-theme-extra-light transition-all group">
+        <div className="relative group flex items-center gap-4 cursor-pointer py-1 px-2 rounded-lg hover:bg-theme-extra-light transition-all group max-w-96">
             <div className="aspect-square w-8 h-8 rounded bg-theme-info-light flex items-center justify-center font-bold text-xs shadow relative">
                 SJ
-                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-theme-success border-2 border-theme-card"></span>
             </div>
             <div className="hidden md:block text-left">
-                <div className="text-xs font-bold text-theme-text-dark leading-tight">
+                <div className="font-bold text-theme-text-dark leading-tight truncate">
                     Capt. Sarah Jenkins
                 </div>
-                <div className="text-xs text-theme-text-muted leading-none font-medium mt-0.5 hidden lg:block">
+                <div className="text-theme-text-muted leading-none font-medium mt-0.5 hidden lg:block text-vs">
                     A320 Type Rated
                 </div>
             </div>
@@ -358,10 +396,10 @@ function User() {
             </div>
 
             {/* Dropdown Menu */}
-            <div className="absolute right-0 top-[120%] w-64 bg-theme-card border border-theme-border rounded shadow opacity-0 invisible group-hover:opacity-100 group-hover:visible -translate-y-2 group-hover:translate-y-0 transition-all duration-150 z-50 text-sm select-none">
-                <div className="px-4 py-2 border-b border-theme-border bg-theme-extra-light">
-                    <div className="text-sm font-bold text-theme-text-dark">Sarah Jenkins</div>
-                    <div className="text-xs text-theme-text-muted">
+            <div className="absolute right-0 top-[120%] w-64 bg-theme-card border border-theme-border rounded shadow opacity-0 invisible group-hover:opacity-100 group-hover:visible -translate-y-2 group-hover:translate-y-0 transition-all duration-150 z-50 text-xs select-none">
+                <div className="px-4 py-2 border-b border-theme-border bg-theme-extra-light cursor-default select-text">
+                    <div className="font-bold text-theme-text-dark">Sarah Jenkins</div>
+                    <div className="text-theme-text-muted">
                         sarah.j@skydeck.aero
                     </div>
                 </div>

@@ -6,7 +6,6 @@ import { fileURLToPath } from 'node:url'
 
 // https://vite.dev/config/
 export default defineConfig({
-    base: '/skydeck/',
     resolve: {
         alias: {
             '@': fileURLToPath(new URL('./src/components', import.meta.url))
@@ -16,9 +15,5 @@ export default defineConfig({
         react(),
         babel({ presets: [reactCompilerPreset()] }),
         tailwindcss(),
-    ],
-    build: {
-        outDir: 'docs'
-    },
-    
+    ]
 })
