@@ -1,4 +1,4 @@
-import { ChevronRight, ChevronUp, Grid2x2, LayoutList } from 'lucide-react';
+import { ChevronRight, Grid2x2, LayoutList } from 'lucide-react';
 import { useState } from 'react';
 
 
