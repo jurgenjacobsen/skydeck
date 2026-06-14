@@ -8,7 +8,7 @@ import Dashboard from './pages/Dashboard';
 import QBank from './pages/QBank';
 import Flows from './pages/Flows';
 import Briefing from './pages/Briefing';
-import Wiki from './pages/Wiki';
+import Wiki from './pages/Legislation';
 import NotFound from './pages/NotFound';
 import Landing from './pages/Landing';
 
@@ -49,7 +49,7 @@ export default function App() {
                 <main className="flex-1 overflow-y-auto bg-theme-bg p-6">
                     <Routes>
                         <Route path="/dashboard" element={<Dashboard qStreak={14} />} />
-                        <Route path="/qbank" element={<QBank qStreak={14} />} />
+                        <Route path="/qbank" element={<QBank />} />
                         <Route path="/legislation" element={<Wiki searchQuery={wikiQuery} />} />
                         <Route path="/flows" element={<Flows />} />
                         <Route path="/briefing" element={<Briefing />} />
