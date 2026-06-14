@@ -1,0 +1,46 @@
+# www.robotstxt.org/
+# Skydeck robots.txt - Optimized for SEO & LLM Crawler Management
+
+# ==========================================
+# 1. Rules for General Search Crawlers
+# ==========================================
+User-agent: *
+Allow: /                     # Allow landing page
+Allow: /legislation          # Allow aviation wiki/legislation search
+Allow: /flows                # Allow flight normal procedures/flows
+Allow: /assets/              # Allow CSS, JS, and image assets
+
+# Disallow user-specific/private application paths
+Disallow: /dashboard         # Private dashboard
+Disallow: /qbank             # Question bank
+Disallow: /briefing          # Meteorological and dispatch briefs
+Disallow: /api/              # Internal API endpoints
+
+# ==========================================
+# 2. Rules for AI / LLM Scrapers (Optional blocking if desired)
+# ==========================================
+# Google-Extended controls Bard/Gemini crawling of custom site data
+User-agent: Google-Extended
+Allow: /
+Allow: /legislation
+Disallow: /dashboard
+Disallow: /qbank
+Disallow: /briefing
+
+# OpenAI crawler (ChatGPT search & training)
+User-agent: GPTBot
+Allow: /
+Allow: /legislation
+Disallow: /dashboard
+Disallow: /qbank
+Disallow: /briefing
+
+# Anthropic crawler (Claude)
+User-agent: ClaudeBot
+Allow: /
+Allow: /legislation
+Disallow: /dashboard
+Disallow: /qbank
+Disallow: /briefing
+
+Sitemap: https://skydeck.jurgen.fyi/sitemap.xml

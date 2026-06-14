@@ -1,0 +1,15 @@
+# Skydeck
+> Skydeck is a professional flight training helper, cockpit companion, and study portal designed for student and commercial pilots to manage interactive checklists, practice exam questions, and study aviation regulations.
+
+## Core Pages
+- [Skydeck Landing Page](https://skydeck.jurgen.fyi/): Overview of Skydeck's platform, flight planning tools, and subscription plans.
+- [Aviation Legislation & Wiki](https://skydeck.jurgen.fyi/legislation): A searchable database of aviation regulations, airspace rules, and legal articles.
+- [Aircraft Normal Procedures (Flows)](https://skydeck.jurgen.fyi/flows): Standard operating procedures (SOPs), flows, and normal flight checklists for multiple aircraft models.
+
+## Application Sections (Requires Login)
+- [Pilot Dashboard](https://skydeck.jurgen.fyi/dashboard): Personal cockpit space with user analytics, aerodrome METAR monitoring, and study streak tracking.
+- [Question Bank (QBank)](https://skydeck.jurgen.fyi/qbank): Interactive simulator containing mock pilot exam questions, detailed explanations, and flight test preparation resources.
+- [Briefing Room](https://skydeck.jurgen.fyi/briefing): Integrated meteorological briefs, dispatch summaries, and flight route planning sheets.
+
+## Reference Materials
+- [Sitemap](https://skydeck.jurgen.fyi/sitemap.xml): XML index of all crawler-accessible pages on Skydeck.

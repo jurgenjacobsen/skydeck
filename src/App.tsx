@@ -13,7 +13,7 @@ import NotFound from './pages/NotFound';
 import Landing from './pages/Landing';
 
 export default function App() { 
-    const location = useLocation();
+    const location = useLocation();;
 
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [searchParams] = useSearchParams();

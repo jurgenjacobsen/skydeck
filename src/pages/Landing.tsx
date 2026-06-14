@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, Lock, User, ArrowRight } from 'lucide-react';
+import PageMeta from '@/util/page-meta';
 
 export default function Landing() {
+
     const [isLogin, setIsLogin] = useState(true);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -21,8 +23,13 @@ export default function Landing() {
             alert(`Registering user: ${name} (${email})`);
         }
     };
+ 
+    return <>
+        <PageMeta
+            title="SkyDeck | Your All-in-One Study Platform"
+            description="SkyDeck is your all-in-one platform for ECQB preparation, flow mastery, and legislative insights. Elevate your performance and stay ahead in the game with our comprehensive tools and resources."
+        />
 
-    return (
         <div className="min-h-screen flex items-center justify-center bg-theme-bg">
             <div className="p-8 grid grid-cols-2 gap-8 w-full max-w-8xl">
                 {/* Left Panel */}
@@ -36,8 +43,8 @@ export default function Landing() {
                     </p>
                     <div className="flex items-center justify-end gap-4 mt-2">
                         <Link
-                            to="/dashboard"
-                            className="px-6 py-2 bg-theme-brand text-white rounded text-xs font-semibold hover:bg-theme-brand-light"
+                            to={"/home"}
+                            className="px-6 py-2 bg-theme-brand text-white rounded text-xs font-semibold hover:bg-theme-brand-light cursor-pointer"
                         >
                             Get Started
                         </Link>
@@ -188,5 +195,5 @@ export default function Landing() {
                 </div>
             </div>
         </div>
-    );
+    </>
 }

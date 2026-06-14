@@ -1,0 +1,55 @@
+# Skydeck - Full System Documentation
+> This document is the full content reference for Large Language Models (LLMs) and search agents indexing the Skydeck platform.
+
+---
+
+## 1. System Overview
+
+Skydeck is an Electronic Flight Bag (EFB) and cockpit companion platform built for modern pilots. It provides:
+- **Interactive Checklists & Flows:** Standard operating procedures for pilots during all phases of flight.
+- **Regulatory Wiki:** Quick lookup for aviation laws, procedures, and terminology.
+- **Flight briefings:** Flight dispatch and meteorological briefings (METAR, TAF, Winds).
+- **Exam Engine (QBank):** Full study prep for private and commercial license training exams.
+
+---
+
+## 2. Core Functional Modules
+
+### 2.1 Pilot Dashboard
+The Dashboard serves as the central control station for the pilot:
+- **Aerodrome METAR Monitoring:** Real-time METAR fetching from NOAA/Aviation Weather Service with ICAO station lookups.
+- **Active Study Streaks:** Visual indicator of daily consecutive study days to build habit formation.
+- **Quick Links:** Quick access to the last active checklist, exam session, or bookmarked regulation.
+
+### 2.2 Question Bank (QBank)
+The QBank helps student pilots prepare for licensing examinations:
+- Multi-category quizzes covering aerodynamics, navigation, meteorology, air law, and human performance.
+- Detailed question explanations with diagrams.
+- Statistics tracking showing accuracy percentage, questions answered, and target completion benchmarks.
+
+### 2.3 Air Law & Legislation Wiki
+A regulatory wiki hosting structural documentation on flight rules:
+- Searchable indexes for Part 91, Part 121, and Part 135 regulations.
+- Simplified explanations of complex airspace rules, VFR minimums, and equipment requirements.
+- Bookmarks and cross-referencing between related regulatory documents.
+
+### 2.4 Aircraft Normal Flows (Procedures)
+Pilots use interactive checklists to maintain flight safety:
+- **Pre-flight, Engine Start, Taxi, Takeoff, Cruise, Descent, Landing, and Shutdown** checklist cards.
+- Structured as visual flows mapped to physical cockpit configurations.
+- Custom checklist builders to adapt to individual tail numbers.
+
+### 2.5 Dispatch & Briefing Room
+A central dispatch room supporting flight preparation:
+- Zulu clock sync (local vs. UTC indicator).
+- Wind-aloft charts, SIGMET / AIRMET warnings.
+- Route logs and fuel planning calculator tools.
+
+---
+
+## 3. Platform Architecture & Layout
+
+Skydeck uses a dual-pane responsive layout optimized for cockpit tablet viewports:
+- **Asymmetric Sidebar:** Fixed left pane housing primary navigation (Dashboard, Question Bank, Legislation, Normal Procedures, Flight Briefings).
+- **Zulu Navigation Header:** Houses a search bar (shortcut `Ctrl + K` to open the command search), UTC/Zulu time clock, and current user profile status.
+- **Workspace Canvas:** Scrollable main area where pages are rendered.
