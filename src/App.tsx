@@ -10,7 +10,6 @@ import { Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
 
 export default function App() { 
     const location = useLocation();
-    const currentTab = location.pathname.split('/')[1];
 
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [searchParams] = useSearchParams();
