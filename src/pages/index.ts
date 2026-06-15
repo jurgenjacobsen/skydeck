@@ -1,0 +1,8 @@
+// export all pages here for easier imports
+export { default as Dashboard } from './Dashboard';
+export { default as QBank } from './QBank';
+export { default as Flows } from './Flows';
+export { default as Briefing } from './Briefing';
+export { default as Wiki } from './Legislation';
+export { default as NotFound } from './NotFound';
+export { default as Landing } from './Landing';

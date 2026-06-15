@@ -1,11 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Flame } from 'lucide-react';
 
-interface DashboardProps {
-    qStreak: number;
-}
-
-const Dashboard: React.FC<DashboardProps> = ({ qStreak }) => {
+export default function Dashboard() {
 
     const [aerodrome, setAerodrome] = useState(() => {
         return localStorage.getItem('homebase_aerodrome') || 'EGLL';
@@ -144,7 +140,7 @@ const Dashboard: React.FC<DashboardProps> = ({ qStreak }) => {
                     </div>
                     <div className="mt-3 flex items-baseline gap-2">
                         <span className="text-2xl font-bold text-theme-text-dark tracking-tight">
-                            {qStreak} Days
+                            {10} Days
                         </span>
                         <span className="text-xs text-theme-text-muted font-medium">
                             Goal: 21 Days
@@ -180,5 +176,3 @@ const Dashboard: React.FC<DashboardProps> = ({ qStreak }) => {
         </div>
     );
 };
-
-export default Dashboard;
