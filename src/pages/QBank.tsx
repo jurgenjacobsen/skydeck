@@ -86,7 +86,7 @@ export default function QBank() {
         setExerciseTab('questions');
 
         const generated: Question[] = [];
-        const subjectName = selectedSubject !== null ? subjects[selectedSubject].name : 'General';
+        // const subjectName = selectedSubject !== null ? subjects[selectedSubject].name : 'General';
 
         const questionPool = [
             `Which of the following describes the correct procedures to follow in case of a communication failure?`,
