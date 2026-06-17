@@ -592,7 +592,7 @@ export default function QBank() {
                                             </div>
                                             <div>
                                                 <h4 className="text-xs font-bold text-theme-text-dark">High Flier</h4>
-                                                <p className="text-[10px] text-theme-text-muted">Pass 5 exams in a row</p>
+                                                <p className="text-vs text-theme-text-muted">Pass 5 exams in a row</p>
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-3 p-3 bg-theme-bg rounded border border-theme-border">
@@ -601,12 +601,12 @@ export default function QBank() {
                                             </div>
                                             <div>
                                                 <h4 className="text-xs font-bold text-theme-text-dark">Night Owl</h4>
-                                                <p className="text-[10px] text-theme-text-muted">Study past 11:00 PM UTC</p>
+                                                <p className="text-vs text-theme-text-muted">Study past 11:00 PM UTC</p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="pt-4 border-t border-theme-border text-center text-[10px] text-theme-text-muted mt-4">
+                                <div className="pt-4 border-t border-theme-border text-center text-vs text-theme-text-muted mt-4">
                                     Last sync: 2 minutes ago
                                 </div>
                             </div>
@@ -856,7 +856,7 @@ export default function QBank() {
                                     hasPassed ? 'border-theme-success bg-theme-success-light/10 text-theme-success' : 'border-theme-error bg-theme-error-light/10 text-theme-error'
                                 }`}>
                                     <span className="text-3xl font-extrabold font-mono">{scorePercentage}%</span>
-                                    <span className="text-[10px] font-bold uppercase tracking-wider">Score</span>
+                                    <span className="text-vs font-bold uppercase tracking-wider">Score</span>
                                 </div>
                                 <div className={`mt-3 px-3 py-1 rounded text-xs font-bold ${
                                     hasPassed ? 'bg-theme-success-light text-theme-success' : 'bg-theme-error-light text-theme-error'
