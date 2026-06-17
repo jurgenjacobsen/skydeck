@@ -11,6 +11,60 @@ import {
     CheckCircle2
 } from 'lucide-react';
 import { useState } from 'react';
+import {
+    ResponsiveContainer,
+    LineChart,
+    Line,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    ReferenceLine
+} from 'recharts';
+
+const mockPerformanceData = [
+    { name: 'Test 1', score: 65, date: '2026-06-01' },
+    { name: 'Test 2', score: 70, date: '2026-06-02' },
+    { name: 'Test 3', score: 80, date: '2026-06-03' },
+    { name: 'Test 4', score: 75, date: '2026-06-04' },
+    { name: 'Test 5', score: 85, date: '2026-06-05' },
+    { name: 'Test 6', score: 60, date: '2026-06-06' },
+    { name: 'Test 7', score: 72, date: '2026-06-07' },
+    { name: 'Test 8', score: 88, date: '2026-06-08' },
+    { name: 'Test 9', score: 90, date: '2026-06-09' },
+    { name: 'Test 10', score: 82, date: '2026-06-10' },
+    { name: 'Test 11', score: 78, date: '2026-06-11' },
+    { name: 'Test 12', score: 85, date: '2026-06-12' },
+    { name: 'Test 13', score: 92, date: '2026-06-13' },
+    { name: 'Test 14', score: 88, date: '2026-06-14' },
+    { name: 'Test 15', score: 95, date: '2026-06-15' },
+];
+
+const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+        const data = payload[0].payload;
+        const score = data.score;
+        const isPassed = score >= 75;
+        return (
+            <div className="bg-theme-card border border-theme-border rounded-lg p-3 shadow-lg font-sans text-xs">
+                <p className="font-bold text-theme-text-dark mb-1">{data.name}</p>
+                <div className="flex items-center gap-4">
+                    <span className="text-theme-text-muted">Score:</span>
+                    <span className={`font-mono font-bold ${isPassed ? 'text-green-500' : 'text-red-500'}`}>
+                        {score}%
+                    </span>
+                    <span className={`px-2 py-1 rounded-full text-[9px] font-bold ${
+                        isPassed ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'
+                    }`}>
+                        {isPassed ? 'Passed' : 'Failed'}
+                    </span>
+                </div>
+                <p className="text-vs text-theme-text-muted mt-1">Date: {data.date}</p>
+            </div>
+        );
+    }
+    return null;
+};
 
 type Question = {
     id: number;
@@ -384,7 +438,83 @@ export default function QBank() {
 
                 {tab === 'profile' && (
                     <div className="space-y-6">
+                        
                         {/* Stats Summary Cards */}
+                        <div className="grid grid-cols-3 gap-4">
+                            <div className="bg-theme-card border border-theme-border rounded p-6 shadow col-span-2">
+                                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                                    <div>
+                                        <h3 className="font-bold text-theme-text-dark text-sm">Performance History</h3>
+                                        <p className="text-theme-text-muted text-xs mt-1">
+                                            Track your score across the last 15 tests. Minimum score to pass is 75%.
+                                        </p>
+                                    </div>
+                                    <div className="flex items-center gap-4 text-xs shrink-0">
+                                        <div className="flex items-center gap-1.5">
+                                            <span className="w-2.5 h-2.5 rounded-full bg-theme-brand inline-block"></span>
+                                            <span className="text-theme-text-main font-medium">Your Score</span>
+                                        </div>
+                                        <div className="flex items-center gap-1.5">
+                                            <span className="w-3 h-0.5 border-t-2 border-dashed border-red-500 inline-block"></span>
+                                            <span className="text-theme-text-main font-medium">Pass Threshold (75%)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="h-64 w-full">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <LineChart
+                                            data={mockPerformanceData}
+                                            margin={{ top: 10, right: 10, left: -25, bottom: 0 }}
+                                        >
+                                            <CartesianGrid strokeDasharray="3 3" stroke="var(--color-theme-border)" vertical={false} />
+                                            <XAxis
+                                                dataKey="name"
+                                                stroke="var(--color-theme-text-muted)"
+                                                fontSize={10}
+                                                tickLine={false}
+                                                axisLine={false}
+                                                dy={10}
+                                            />
+                                            <YAxis
+                                                stroke="var(--color-theme-text-muted)"
+                                                fontSize={10}
+                                                tickLine={false}
+                                                axisLine={false}
+                                                domain={[0, 100]}
+                                                tickFormatter={(value) => `${value}%`}
+                                            />
+                                            <Tooltip
+                                                content={<CustomTooltip />}
+                                                cursor={{ stroke: 'var(--color-theme-border)', strokeWidth: 1 }}
+                                            />
+                                            <ReferenceLine
+                                                y={75}
+                                                stroke="#ef4444"
+                                                strokeDasharray="4 4"
+                                                strokeWidth={1.5}
+                                                opacity={0.5}
+                                                label={{
+                                                    value: '75% Pass Min',
+                                                    position: 'insideBottomRight',
+                                                    fill: '#ef4444',
+                                                    fontSize: 9,
+                                                    fontWeight: 600,
+                                                    dy: -5
+                                                }}
+                                            />
+                                            <Line
+                                                type="monotone"
+                                                dataKey="score"
+                                                stroke="var(--color-theme-brand)"
+                                                strokeWidth={3}
+                                                dot={{ r: 4, strokeWidth: 2, stroke: 'var(--color-theme-card)', fill: 'var(--color-theme-brand)' }}
+                                                activeDot={{ r: 6, strokeWidth: 0, fill: 'var(--color-theme-brand-light)' }}
+                                            />
+                                        </LineChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            </div>
+                        </div>
                         <div className="grid grid-cols-4 gap-4">
                             <div className="bg-theme-card border border-theme-border rounded p-6 shadow flex flex-col justify-between">
                                 <div className="flex justify-between items-start">
