@@ -59,7 +59,7 @@ function SearchBar({ onClick }: { onClick?: () => void }) {
     return (
         <div
             onClick={onClick}
-            className="relative overflow-hidden cursor-pointer w-full"
+            className="max-w-2/3 relative overflow-hidden cursor-pointer w-full"
         >
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none ">
                 <SearchIcon className="w-4 h-4 text-theme-text-muted" />

@@ -10,7 +10,7 @@ import {
     Clock,
     CheckCircle2
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     ResponsiveContainer,
     LineChart,
@@ -40,7 +40,18 @@ const mockPerformanceData = [
     { name: 'Test 15', score: 95, date: '2026-06-15' },
 ];
 
-const CustomTooltip = ({ active, payload }: any) => {
+interface CustomTooltipProps {
+    active?: boolean;
+    payload?: Array<{
+        payload: {
+            name: string;
+            score: number;
+            date: string;
+        };
+    }>;
+}
+
+const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
     if (active && payload && payload.length) {
         const data = payload[0].payload;
         const score = data.score;
@@ -120,6 +131,45 @@ export default function QBank() {
     const [submitted, setSubmitted] = useState<boolean[]>(Array(10).fill(false));
     const [flagged, setFlagged] = useState<boolean[]>(Array(10).fill(false));
     const [isExamFinished, setIsExamFinished] = useState(false);
+
+    useEffect(() => {
+        if (exerciseMode === null || exerciseTab !== 'questions') return;
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            const activeEl = document.activeElement;
+            if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')) {
+                return;
+            }
+
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                if (currentQuestionIndex > 0) {
+                    setCurrentQuestionIndex(prev => prev - 1);
+                }
+            } else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                if (currentQuestionIndex < questions.length - 1) {
+                    setCurrentQuestionIndex(prev => prev + 1);
+                }
+            } else {
+                const keyLower = e.key.toLowerCase();
+                const optionMap: Record<string, number> = { a: 0, b: 1, c: 2, d: 3 };
+                if (keyLower in optionMap) {
+                    const optIdx = optionMap[keyLower];
+                    const isQSubmitted = submitted[currentQuestionIndex] || isExamFinished;
+                    if (!isQSubmitted) {
+                        e.preventDefault();
+                        const nextAnswers = [...answers];
+                        nextAnswers[currentQuestionIndex] = optIdx;
+                        setAnswers(nextAnswers);
+                    }
+                }
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [exerciseMode, exerciseTab, currentQuestionIndex, questions.length, submitted, isExamFinished, answers]);
 
     const explanationsPool = [
         "ICAO Annex 11 and standard SOPs dictate that in case of double-way communication failure under IFR, a pilot must squawk 7600 and follow predetermined procedures based on VMC or IMC conditions.",
@@ -269,6 +319,10 @@ export default function QBank() {
         setExerciseTab('results');
     };
 
+    const saveTest = () => {
+        console.log("Saving test session results...");
+    };
+
     // Score Calculations
     const correctCount = questions.reduce((acc, q, idx) => {
         return acc + (answers[idx] === q.answer ? 1 : 0);
@@ -373,7 +427,7 @@ export default function QBank() {
                                             }}>
                                             <div className="flex items-center space-x-2">
                                                 {selectedSubject === i && (
-                                                    <ChevronRight className={`h-4 w-4 text-theme-brand`} />
+                                                    <ChevronRight className={`h-4 w-4 text-theme-brand animate-chevron-appear`} />
                                                 )}
                                                 <span className="text-sm text-theme-text-main group-hover:text-theme-text-main font-medium">
                                                     {subject.name}
@@ -390,12 +444,14 @@ export default function QBank() {
                         <div className="bg-theme-card border border-theme-border rounded p-6 shadow col-span-1">
                             <div className="flex flex-col justify-between h-full">
                                 <div>
-                                    <h3 className="font-bold text-theme-text-dark text-base">
-                                        {selectedSubject !== null ? subjects[selectedSubject]?.name : 'Select a Subject'}
-                                    </h3>
-                                    <p className="text-theme-text-main text-xs mt-2">
-                                        {selectedSubject !== null ? subjects[selectedSubject]?.count : '0'} questions available.
-                                    </p>
+                                    <div key={selectedSubject ?? 'none'}>
+                                        <h3 className="font-bold text-theme-text-dark text-base">
+                                            {selectedSubject !== null ? subjects[selectedSubject]?.name : 'Select a Subject'}
+                                        </h3>
+                                        <p className="text-theme-text-main text-xs mt-2">
+                                            {selectedSubject !== null ? subjects[selectedSubject]?.count : '0'} questions available.
+                                        </p>
+                                    </div>
                                     <div className="mt-4 pt-4 border-t border-theme-border text-theme-text-main">
                                         <ul className="list-disc list-inside space-y-4 text-sm">
                                             <li className="flex items-center justify-between">
@@ -617,19 +673,25 @@ export default function QBank() {
                 {/* Exercise Navigation Sub-Tabs */}
                 <div className="flex border-b border-theme-border text-xs my-4">
                     {
-                        exerciseTabs.map((t) => (
-                            <button
-                                key={t.value}
-                                onClick={() => setExerciseTab(t.value)}
-                                className={`px-6 py-3 border-b-2 font-semibold text-xs transition-all ${
-                                    exerciseTab === t.value
-                                        ? 'border-theme-brand text-theme-brand'
-                                        : 'border-transparent text-theme-text-muted hover:text-theme-text-main cursor-pointer'
-                                }`}
-                            >
-                                {t.name}
-                            </button>
-                        ))
+                        exerciseTabs.map((t) => {
+                            const isResultsDisabled = t.value === 'results' && !isExamFinished;
+                            return (
+                                <button
+                                    key={t.value}
+                                    disabled={isResultsDisabled}
+                                    onClick={() => setExerciseTab(t.value)}
+                                    className={`px-6 py-3 border-b-2 font-semibold text-xs transition-all ${
+                                        isResultsDisabled
+                                            ? 'border-transparent text-theme-text-muted opacity-50'
+                                            : exerciseTab === t.value
+                                                ? 'border-theme-brand text-theme-brand'
+                                                : 'border-transparent text-theme-text-muted hover:text-theme-text-main cursor-pointer'
+                                    }`}
+                                >
+                                    {t.name}
+                                </button>
+                            );
+                        })
                     }
                 </div>
 
@@ -672,7 +734,7 @@ export default function QBank() {
                                         if (isSelected) {
                                             btnStyle = 'border-theme-brand bg-theme-info-light text-theme-brand';
                                         }
-
+                                        
                                         if (isQSubmitted) {
                                             if (isCorrect) {
                                                 btnStyle = 'border-theme-success bg-theme-success-light text-theme-success font-semibold';
@@ -706,7 +768,7 @@ export default function QBank() {
 
                                 {/* Explanation box */}
                                 {((exerciseMode === 'practice' && submitted[currentQuestionIndex]) || isExamFinished) && (
-                                    <div className="p-4 bg-theme-info-light/20 border border-theme-info-light/50 rounded space-y-2">
+                                    <div className="p-4 bg-theme-bg border border-theme-border rounded space-y-2">
                                         <h4 className="font-bold text-theme-brand text-xs">Explanation & Learning Objective</h4>
                                         <p className="text-theme-text-main text-xs leading-relaxed">
                                             {explanationsPool[currentQuestionIndex]}
@@ -761,15 +823,22 @@ export default function QBank() {
                                             >
                                                 Submit Answer
                                             </button>
-                                        ) : (
-                                            <button
-                                                disabled={currentQuestionIndex === 9}
-                                                onClick={() => setCurrentQuestionIndex(prev => prev + 1)}
-                                                className="px-5 py-1.5 rounded bg-theme-brand text-white text-xs font-bold hover:bg-theme-brand/90 shadow cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
-                                            >
-                                                Next
-                                            </button>
-                                        )}
+                                        ) : (currentQuestionIndex === questions.length - 1 && !isExamFinished) ? (
+                                             <button
+                                                 onClick={finishExercise}
+                                                 className="px-5 py-1.5 rounded bg-theme-brand text-white text-xs font-bold hover:bg-theme-brand/90 shadow cursor-pointer"
+                                             >
+                                                 Finish Attempt
+                                             </button>
+                                         ) : (
+                                             <button
+                                                 disabled={currentQuestionIndex === questions.length - 1}
+                                                 onClick={() => setCurrentQuestionIndex(prev => prev + 1)}
+                                                 className="px-5 py-1.5 rounded bg-theme-brand text-white text-xs font-bold hover:bg-theme-brand/90 shadow cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
+                                             >
+                                                 Next
+                                             </button>
+                                         )}
                                     </div>
                                 </div>
                             </div>
@@ -829,19 +898,29 @@ export default function QBank() {
                                 </div>
 
                                 <div className="border-t border-theme-border pt-4 flex flex-col gap-2">
-                                    <button
-                                        onClick={finishExercise}
-                                        className="w-full bg-theme-brand text-white px-4 py-2 rounded font-semibold text-xs hover:bg-theme-brand-light cursor-pointer text-center"
-                                    >
-                                        Finish Session
-                                    </button>
-                                    <button
-                                        onClick={() => setExerciseMode(null)}
-                                        className="w-full bg-theme-card text-theme-text-main border border-theme-border px-4 py-2 rounded text-xs font-semibold hover:bg-theme-bg cursor-pointer text-center"
-                                    >
-                                        Cancel Session
-                                    </button>
-                                </div>
+                                     {!isExamFinished && (
+                                         <button
+                                             onClick={finishExercise}
+                                             className="w-full bg-theme-brand text-white px-4 py-2 rounded font-semibold text-xs hover:bg-theme-brand-light cursor-pointer text-center"
+                                         >
+                                             Finish Session
+                                         </button>
+                                     )}
+                                     {isExamFinished && (
+                                         <button
+                                             onClick={() => setExerciseTab('results')}
+                                             className="w-full bg-theme-brand text-white px-4 py-2 rounded font-semibold text-xs hover:bg-theme-brand-light cursor-pointer text-center"
+                                         >
+                                             View Results
+                                         </button>
+                                     )}
+                                     <button
+                                         onClick={() => setExerciseMode(null)}
+                                         className="w-full bg-theme-card text-theme-text-main border border-theme-border px-4 py-2 rounded text-xs font-semibold hover:bg-theme-bg cursor-pointer text-center"
+                                     >
+                                         Cancel Session
+                                     </button>
+                                 </div>
                             </div>
                         </div>
                     </div>
@@ -873,7 +952,7 @@ export default function QBank() {
                                     You have completed a 10-question evaluation in <span className="font-semibold capitalize">{exerciseMode} mode</span> for the subject <span className="font-semibold">{selectedSubject !== null ? subjects[selectedSubject].name : 'General'}</span>.
                                 </p>
 
-                                <div className="grid grid-cols-3 gap-4 text-xs">
+                                <div className="mt-4 grid grid-cols-3 gap-4 text-xs">
                                     <div className="p-3 bg-theme-bg rounded border border-theme-border">
                                         <span className="text-theme-text-muted block font-medium">Correct</span>
                                         <span className="text-lg font-bold text-theme-success font-mono">{correctCount} / 10</span>
@@ -896,7 +975,7 @@ export default function QBank() {
                                 Question-by-Question Review
                             </h3>
 
-                            <div className="divide-y divide-theme-border-soft">
+                            <div className="mt-4 divide-y divide-theme-border-soft">
                                 {questions.map((q, idx) => {
                                     const userAns = answers[idx];
                                     const isCorrect = userAns === q.answer;
@@ -922,7 +1001,7 @@ export default function QBank() {
                                             <div className="flex items-center gap-6 text-xs">
                                                 <div className="flex gap-4">
                                                     <div>
-                                                        <span className="text-theme-text-muted text-[10px] block font-medium">Your Answer</span>
+                                                        <span className="text-theme-text-muted text-vs block font-medium">Your Answer</span>
                                                         <span className={`font-bold font-mono ${
                                                             userAns === null ? 'text-theme-text-muted' : isCorrect ? 'text-theme-success' : 'text-theme-error'
                                                         }`}>
@@ -930,7 +1009,7 @@ export default function QBank() {
                                                         </span>
                                                     </div>
                                                     <div>
-                                                        <span className="text-theme-text-muted text-[10px] block font-medium">Correct Answer</span>
+                                                        <span className="text-theme-text-muted text-vs block font-medium">Correct Answer</span>
                                                         <span className="font-bold text-theme-success font-mono">
                                                             {optionLetters[q.answer]}
                                                         </span>
@@ -957,9 +1036,15 @@ export default function QBank() {
                         <div className="flex justify-end gap-3">
                             <button
                                 onClick={() => setExerciseMode(null)}
-                                className="px-4 py-2 border border-theme-border text-theme-text-main rounded text-xs font-bold hover:bg-theme-bg cursor-pointer"
+                                className="px-4 py-2 bg-theme-card text-theme-text-main border border-theme-border rounded text-xs font-bold hover:bg-theme-bg cursor-pointer"
                             >
                                 Back to Subject List
+                            </button>
+                            <button
+                                onClick={saveTest}
+                                className="px-4 py-2 bg-theme-card text-theme-text-main border border-theme-border rounded text-xs font-bold hover:bg-theme-bg cursor-pointer"
+                            >
+                                Save Test
                             </button>
                             <button
                                 onClick={() => loadExercise(exerciseMode || 'practice')}

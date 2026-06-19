@@ -32,6 +32,10 @@ body, input, textarea, select, button {
 
 * **Poppins Font Family:** Imported from Google Fonts, used globally to provide a clean, modern, and highly legible interface for dense aviation data.
 * **12px Base Scaling:** Set on inputs, selects, body copy, and button triggers to facilitate a compact, high-density, professional EFB (Electronic Flight Bag) layout.
+* **Font Smoothing:** Applied globally to ensure crisp text rendering across all platforms, enhancing readability in critical flight information displays.
+
+### 1.1 Typography Scale
+Try to use a consistent typographic scale for headings, body text, and UI elements. Using mainly the variables existing in the design system.
 
 ---
 
@@ -52,16 +56,7 @@ All color tokens map directly to the hex values defined in the design system:
 | `muted` | `#898989` | **Muted Text** (Subtitle tags, timestamps, breadcrumbs) |
 
 ### Functional Status Indicators
-
-* **Success State:**
-  * Active: `#19a874`
-  * Background: `#e4f7f3`
-* **Error State:**
-  * Active: `#ef4444`
-  * Background: `#fee2e2`
-* **Information State:**
-  * Active: `#0099ff`
-  * Background: `#eff6fe`
+Colors variables such as theme success, error and info should be only used when really needed, as the design system is primarily monochromatic with a single accent color.
 
 ---
 
