@@ -25,7 +25,6 @@ export default function Header({ onSearchClick }: { onSearchClick?: () => void }
             {/* Path / Section indicator */}
             <div className="flex items-center justify-between">
                 <Location />
-                <DevPanelButton onClick={() => setIsDevPanelOpen(true)} />
             </div>
 
             {/* Search Bar */}
@@ -41,17 +40,6 @@ export default function Header({ onSearchClick }: { onSearchClick?: () => void }
             </div>
             <DevPanel isOpen={isDevPanelOpen} onClose={() => setIsDevPanelOpen(false)} />
         </header>
-    );
-}
-
-function DevPanelButton({ onClick }: { onClick?: () => void }) {
-    return (
-        <button
-            onClick={onClick}
-            className="px-4 py-1.5 rounded text-vs font-mono border border-red-300 bg-red-300/25 text-red-500 font-medium cursor-pointer hover:bg-red-300/50 transition-colors"
-        >
-            Dev Panel
-        </button>
     );
 }
 
@@ -432,7 +420,7 @@ function User() {
 
                 <a
                     href="#logout"
-                    className="flex items-center gap-2 px-4 py-2 text-theme-error hover:bg-theme-error-light transition-colors hover:bg-theme-bg"
+                    className="flex items-center gap-2 px-4 py-2 text-theme-error transition-colors hover:bg-theme-bg"
                 >
                     <LogOut className="w-4 h-4 group-hover:text-red-500" />
                     <span className="font-medium group-hover:text-red-500">Log Out</span>

@@ -32,7 +32,7 @@ export default function Sidebar() {
                 </div>
             </div>
             <div className="p-4 border-t border-theme-border flex flex-col items-center gap-4">
-                <Status />
+                <Status /> 
                 <VersionInfo />
             </div>
         </aside>
