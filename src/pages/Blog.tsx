@@ -571,7 +571,7 @@ export default function Blog() {
                                 <button
                                     key={category}
                                     onClick={() => setSelectedCategory(category)}
-                                    className={`px-4 py-1 rounded text-xs font-medium transition-all ${
+                                    className={`px-4 py-1 rounded text-xs font-medium ${
                                         selectedCategory === category
                                             ? 'bg-theme-brand text-white'
                                             : 'bg-theme-bg text-theme-text-main border border-theme-border hover:bg-theme-hover'
@@ -588,7 +588,7 @@ export default function Blog() {
                     {searchQuery === '' && (selectedCategory === 'All' || selectedCategory === 'Briefing') && (
                         <div 
                             onClick={() => setActivePost(featuredPost)}
-                            className="group cursor-pointer bg-theme-card border border-theme-border rounded overflow-hidden flex flex-col lg:flex-row shadow hover:border-theme-brand/40 transition-all duration-300"
+                            className="group cursor-pointer bg-theme-card border border-theme-border rounded overflow-hidden flex flex-col lg:flex-row shadow hover:border-theme-brand/40 transition-[border-color] duration-200"
                             id={`article-card-${featuredPost.id}`}
                         >
                             <div className="p-6 md:p-8 flex-1 flex flex-col justify-between space-y-4">
@@ -644,7 +644,7 @@ export default function Blog() {
                                 <div
                                     key={post.id}
                                     onClick={() => setActivePost(post)}
-                                    className="group cursor-pointer bg-theme-card border border-theme-border rounded overflow-hidden flex flex-col justify-between shadow hover:border-theme-brand/40 hover:-translate-y-0.5 transition-all duration-300"
+                                    className="group cursor-pointer bg-theme-card border border-theme-border rounded overflow-hidden flex flex-col justify-between shadow hover:border-theme-brand/40 hover:-translate-y-0.5 transition-[border-color,transform] duration-200"
                                     id={`article-card-${post.id}`}
                                 >
                                     <div className="p-5 space-y-3">

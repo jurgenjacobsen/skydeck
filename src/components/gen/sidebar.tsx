@@ -91,8 +91,10 @@ function Status() {
 
 function VersionInfo() {
     return (
-        <div className="text-theme-text-muted text-xs">
-            Version {packageJson.version}
+        <div className="text-theme-text-muted text-xs flex items-center justify-between gap-2">
+            <span>
+                V {packageJson.version}
+            </span>
         </div>
     );
 }

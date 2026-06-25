@@ -9,3 +9,4 @@
 ### Changed
 - Adjusted the outer spacing container in [Blog.tsx](/src/pages/Blog.tsx) to align with standard page layouts (removing centering, max-width constraints, and custom padding).
 - Updated [AGENTS.md](/AGENTS.md) to explicitly enforce the rule that no absolute filesystem paths (such as `C:\` or `file:///C:/`) should ever be referenced in documentation files.
+- Removed transition delay/animations in [Blog.tsx](/src/pages/Blog.tsx) when selecting categories to enable instant, flicker-free post filtering.
