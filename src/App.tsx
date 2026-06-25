@@ -4,7 +4,7 @@ import Sidebar from '@/gen/sidebar';
 import Header from '@/gen/header';
 import SearchModal from '@/gen/search-modal';
 
-import { Dashboard, QBank, Flows, Briefing, Wiki, NotFound, Landing } from './pages';
+import { Dashboard, QBank, Flows, Briefing, Wiki, NotFound, Landing, Blog } from './pages';
 
 import { Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
 
@@ -48,6 +48,7 @@ export default function App() {
                         <Route path="/legislation" element={<Wiki searchQuery={wikiQuery} />} />
                         <Route path="/flows" element={<Flows />} />
                         <Route path="/briefing" element={<Briefing />} />
+                        <Route path="/blog" element={<Blog />} />
                         <Route path="*" element={<NotFound />} />
                     </Routes>
                 </main>

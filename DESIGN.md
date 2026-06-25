@@ -1,6 +1,6 @@
 # SkyDeck Design Specification
 
-This document details the styling architecture, visual design tokens, typography, and interactive component layouts implemented for the SkyDeck Electronic Flight Bag (EFB) platform, as configured in [StyleTest.tsx](file:///C:/Users/jurgen/Documents/Code/skydeck/src/StyleTest.tsx).
+This document details the styling architecture, visual design tokens, typography, and interactive component layouts implemented for the SkyDeck Electronic Flight Bag (EFB) platform, as configured in [StyleTest.tsx](/src/StyleTest.tsx).
 
 ---
 

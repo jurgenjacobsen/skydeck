@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BookOpenIcon, FileTextIcon, GraduationCapIcon, HomeIcon, WorkflowIcon } from "lucide-react";
+import { BookOpenIcon, FileTextIcon, GraduationCapIcon, HomeIcon, NewspaperIcon, WorkflowIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import packageJson from '../../../package.json';
@@ -10,6 +10,7 @@ const links = [
     { name: 'Legislation', icon: BookOpenIcon, path: '/legislation' },
     { name: 'Flows Trainer', icon: WorkflowIcon, path: '/flows' },
     { name: 'Flight Briefing', icon: FileTextIcon, path: '/briefing' },
+    { name: 'Blog', icon: NewspaperIcon, path: '/blog' },
 ]
 
 export default function Sidebar() {

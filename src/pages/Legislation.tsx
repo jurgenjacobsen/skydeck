@@ -348,7 +348,7 @@ const Wiki: React.FC<WikiProps> = ({ searchQuery }) => {
                     {/* Right Column: Comparative matrix */}
                     <div className="space-y-6">
                         <div className="bg-theme-card border border-theme-border rounded p-6 space-y-4 shadow-sm">
-                            <h3 className="font-bold text-theme-text-dark text-sm font-semibold">
+                            <h3 className="font-bold text-theme-text-dark text-sm">
                                 Fuel Reserves Comparison
                             </h3>
                             <div className="space-y-4 text-xs">
@@ -577,7 +577,7 @@ const Wiki: React.FC<WikiProps> = ({ searchQuery }) => {
                     {/* Right Column: Conditions warning */}
                     <div className="space-y-6">
                         <div className="bg-theme-card border border-theme-border rounded p-6 space-y-4 shadow-sm">
-                            <h3 className="font-bold text-theme-text-dark text-sm font-semibold">
+                            <h3 className="font-bold text-theme-text-dark text-sm">
                                 Disqualifying Conditions
                             </h3>
                             <p className="text-xs text-theme-text-muted leading-relaxed">

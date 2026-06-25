@@ -6,3 +6,4 @@ export { default as Briefing } from './Briefing';
 export { default as Wiki } from './Legislation';
 export { default as NotFound } from './NotFound';
 export { default as Landing } from './Landing';
+export { default as Blog } from './Blog';
