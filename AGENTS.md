@@ -1,7 +1,7 @@
 # AGENTS.md
 This document outlines the coding instructions and execution method for this codebase.
 
-NEVER write any paths to the local file system. All paths should be relative to the root of the project. For example, if you need to reference a file in the `src` folder, use a relative path like `/src/file.ts` instead of an absolute path like `C:/Users/user1/Code/skydeck/src/file.ts`.
+NEVER reference absolute local filesystem path routes (such as `C:\` or `file:///C:/`) in any documentation or code files (such as `.md` files). All paths must be relative to the root of the project. For example, if you need to reference a file in the `src` folder, use a relative path like `/src/file.ts` instead of an absolute path like `C:/Users/user1/Code/skydeck/src/file.ts`.
 
 Not withstanding the instructions below, all code should be written in the most effective, clean and easy-to-maintain manner possible. You should avoid overly complex or overengineered solutions. Focus on writing the less to reach the desired functionality. The code should be well-documented, so the variables and functions should have concise and easy to understand names. 
 

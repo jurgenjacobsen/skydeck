@@ -15,10 +15,7 @@ import {
     ChevronRightIcon,
     CloudSunIcon,
     RefreshCw,
-    Wind,
-    Compass,
-    Eye,
-    Thermometer,
+    CopyIcon,
 } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import DevPanel from './dev-panel';
@@ -217,7 +214,7 @@ function Notifications() {
                         ? 'scale-100 opacity-100'
                         : 'scale-0 opacity-0 pointer-events-none'
                 }`}>
-                    <span className="absolute inline-flex h-full w-full animate-ping-slow rounded-full bg-red-500 opacity-40"></span>
+                    <span className="absolute inline-flex h-full w-full animate-ping-slow rounded-full bg-red-500 opacity-50"></span>
                     <span className="relative">{unreadCount > 0 ? unreadCount : prevUnreadCount}</span>
                 </span>
             </button>
@@ -467,8 +464,16 @@ function Weather() {
     });
     const [metar, setMetar] = useState('Loading...');
     const [taf, setTaf] = useState('Loading...');
+    const [fltCat, setFltCat] = useState('VFR');
     const [loading, setLoading] = useState(false);
     const [hasUpdate, setHasUpdate] = useState(false);
+    const [copied, setCopied] = useState<'metar' | 'taf' | null>(null);
+
+    const copyToClipboard = (text: string, type: 'metar' | 'taf') => {
+        navigator.clipboard.writeText(text);
+        setCopied(type);
+        setTimeout(() => setCopied(null), 2000);
+    }
 
     const metarRef = useRef(metar);
     const tafRef = useRef(taf);
@@ -496,100 +501,68 @@ function Weather() {
         }
     };
 
-    // Mock data fallback mapping
-    const getMockWeather = (icao: string) => {
-        const normalized = icao.toUpperCase();
-        if (normalized === 'EGLL') {
-            return {
-                metar: 'EGLL 251750Z 24012KT 9999 FEW025 21/14 Q1013 NOSIG',
-                taf: 'EGLL 251700Z 2518/2624 23010KT 9999 FEW030 PROB30 TEMPO 2520/2602 -SHRA BKN020'
-            };
-        } else if (normalized === 'LFPG') {
-            return {
-                metar: 'LFPG 251750Z 26010KT 9999 BKN035 22/13 Q1015 NOSIG',
-                taf: 'LFPG 251700Z 2518/2624 25008KT 9999 BKN040 TX23/2614Z TN15/2604Z'
-            };
-        } else if (normalized === 'KJFK') {
-            return {
-                metar: 'KJFK 251751Z 18015KT 10SM SCT025 BKN250 24/19 A2992 RMK AO2',
-                taf: 'KJFK 251730Z 2518/2624 19014G20KT P6SM FEW030 SCT250'
-            };
-        }
-        return {
-            metar: `${normalized} 251750Z 19010KT 9999 FEW030 20/15 Q1013`,
-            taf: `${normalized} 251700Z 2518/2624 18008KT 9999 FEW035`
-        };
-    };
-
     const fetchWeather = () => {
         setLoading(true);
+        const startTime = Date.now();
 
-        const metarTarget = `https://aviationweather.gov/api/data/metar?ids=${aerodrome}&format=json`;
-        const metarUrl = `https://corsproxy.io/?${encodeURIComponent(metarTarget)}`;
-        const tafTarget = `https://aviationweather.gov/api/data/taf?ids=${aerodrome}&format=json`;
-        const tafUrl = `https://corsproxy.io/?${encodeURIComponent(tafTarget)}`;
+        const targetUrl = `https://aviationweather.gov/api/data/metar?ids=${aerodrome}&format=json&taf=true`;
+        const url = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
 
-        let metarFinished = false;
-        let tafFinished = false;
-
-        const checkFinished = () => {
-            if (metarFinished && tafFinished) {
+        const finalize = (successCallback: () => void) => {
+            const duration = Date.now() - startTime;
+            const delay = Math.max(0, 600 - duration);
+            setTimeout(() => {
+                successCallback();
                 setLoading(false);
-            }
+            }, delay);
         };
 
-        // Fetch METAR
-        fetch(metarUrl)
+        fetch(url)
             .then((res) => {
-                if (!res.ok) throw new Error('METAR fetch failed');
+                if (!res.ok) throw new Error('Weather fetch failed');
                 return res.json();
             })
             .then((data) => {
                 const item = Array.isArray(data) ? data[0] : data;
-                const newMetar = item?.rawOb || getMockWeather(aerodrome).metar;
-                
-                if (metarRef.current !== 'Loading...' && metarRef.current !== newMetar) {
-                    setHasUpdate(true);
-                }
-                setMetar(newMetar);
-                metarFinished = true;
-                checkFinished();
-            })
-            .catch(() => {
-                const fallback = getMockWeather(aerodrome).metar;
-                if (metarRef.current !== 'Loading...' && metarRef.current !== fallback) {
-                    setHasUpdate(true);
-                }
-                setMetar(fallback);
-                metarFinished = true;
-                checkFinished();
-            });
+                finalize(() => {
+                    if (!item) {
+                        const errorMetar = `No weather data found for ${aerodrome}`;
+                        if (metarRef.current !== 'Loading...' && metarRef.current !== errorMetar) {
+                            setHasUpdate(true);
+                        }
+                        setMetar(errorMetar);
+                        setTaf('');
+                        setFltCat('N/A');
+                        return;
+                    }
 
-        // Fetch TAF
-        fetch(tafUrl)
-            .then((res) => {
-                if (!res.ok) throw new Error('TAF fetch failed');
-                return res.json();
-            })
-            .then((data) => {
-                const item = Array.isArray(data) ? data[0] : data;
-                const newTaf = item?.rawTAF || getMockWeather(aerodrome).taf;
+                    const newMetar = item.rawOb || '';
+                    const newTaf = item.rawTaf || '';
+                    const newFltCat = item.fltCat || 'VFR';
 
-                if (tafRef.current !== 'Loading...' && tafRef.current !== newTaf) {
-                    setHasUpdate(true);
-                }
-                setTaf(newTaf);
-                tafFinished = true;
-                checkFinished();
+                    if (metarRef.current !== 'Loading...' && metarRef.current !== newMetar) {
+                        setHasUpdate(true);
+                    }
+                    if (tafRef.current !== 'Loading...' && tafRef.current !== newTaf) {
+                        setHasUpdate(true);
+                    }
+
+                    setMetar(newMetar);
+                    setTaf(newTaf);
+                    setFltCat(newFltCat);
+                });
             })
-            .catch(() => {
-                const fallback = getMockWeather(aerodrome).taf;
-                if (tafRef.current !== 'Loading...' && tafRef.current !== fallback) {
-                    setHasUpdate(true);
-                }
-                setTaf(fallback);
-                tafFinished = true;
-                checkFinished();
+            .catch((err) => {
+                console.error(err);
+                finalize(() => {
+                    const errorMsg = `Error loading weather for ${aerodrome}`;
+                    if (metarRef.current !== 'Loading...' && metarRef.current !== errorMsg) {
+                        setHasUpdate(true);
+                    }
+                    setMetar(errorMsg);
+                    setTaf('');
+                    setFltCat('N/A');
+                });
             });
     };
 
@@ -629,59 +602,6 @@ function Weather() {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [isOpen]);
 
-    // Parse METAR for display
-    const decoded = (() => {
-        const raw = metar || '';
-        // Wind: e.g. 24012KT, 24012G20KT, VRB05KT
-        const windMatch = raw.match(/(?:^|\s)(VRB|\d{3})(\d{2,3})(?:G(\d{2,3}))?KT/);
-        // Visibility: e.g. 9999, 5000, 10SM, 1/2SM
-        const visMatch = raw.match(/(?:^|\s)(\d{4})(?:\s|$)/) || raw.match(/(?:^|\s)(\d+(w:\/\d+)?SM)(?:\s|$)/);
-        // Temp/Dew: e.g. 21/14, M02/M05, 05/M01
-        const tempMatch = raw.match(/(?:^|\s)(M?\d{2})\/(M?\d{2})(?:\s|$)/);
-        // QNH/Altimeter: e.g. Q1013, A2992
-        const qnhMatch = raw.match(/(?:^|\s)Q(\d{4})(?:\s|$)/) || raw.match(/(?:^|\s)A(\d{4})(?:\s|$)/);
-
-        let wind = 'Calm winds';
-        if (windMatch) {
-            const dir = windMatch[1] === 'VRB' ? 'Variable' : `${windMatch[1]}°`;
-            const speed = parseInt(windMatch[2], 10);
-            const gust = windMatch[3] ? ` gusting ${windMatch[3]} kt` : '';
-            wind = `${dir} at ${speed} kt${gust}`;
-        }
-
-        let visibility = 'Unknown visibility';
-        if (visMatch) {
-            const visVal = visMatch[1];
-            if (visVal === '9999') visibility = '10 km or more (CAVOK)';
-            else if (visVal.endsWith('SM')) visibility = `${visVal}`;
-            else visibility = `${parseInt(visVal, 10) / 1000} km`;
-        }
-
-        let temp = 'Unknown temp';
-        if (tempMatch) {
-            const tVal = tempMatch[1].startsWith('M') ? `-${tempMatch[1].substring(1)}` : tempMatch[1];
-            const dVal = tempMatch[2].startsWith('M') ? `-${tempMatch[2].substring(1)}` : tempMatch[2];
-            temp = `${tVal}°C / DP ${dVal}°C`;
-        }
-
-        let altimeter = 'Unknown altimeter';
-        if (qnhMatch) {
-            const val = qnhMatch[1];
-            if (raw.includes(`Q${val}`)) altimeter = `QNH ${val} hPa`;
-            else altimeter = `A${val.substring(0, 2)}.${val.substring(2)} inHg`;
-        }
-
-        // Determine flight category
-        let flightRules: 'VFR' | 'IFR' | 'MVFR' = 'VFR';
-        if (raw.includes('BKN008') || raw.includes('OVC008') || raw.includes('BKN005') || raw.includes('OVC005')) {
-            flightRules = 'IFR';
-        } else if (raw.includes('BKN015') || raw.includes('OVC015') || raw.includes('BKN025') || raw.includes('OVC025')) {
-            flightRules = 'MVFR';
-        }
-
-        return { wind, visibility, temp, altimeter, flightRules };
-    })();
-
     // Format TAF lines
     const formattedTafLines = (() => {
         const raw = taf || '';
@@ -714,11 +634,10 @@ function Weather() {
                 id="btn-weather-dropdown"
             >
                 <CloudSunIcon size={18} className="text-theme-text-muted hover:text-theme-text-main transition-colors" />
-                {loading && (
-                    <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full border-2 border-white bg-theme-brand animate-pulse"></span>
-                )}
                 {hasUpdate && !loading && (
-                    <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500 ring-2 ring-white"></span>
+                    <span className={`absolute top-1 right-1 flex h-2 w-2 items-center justify-center rounded-full bg-red-500 text-vs shadow ring-2 ring-white transition-all duration-300 ease-out origin-center`}>
+                        <span className="absolute inline-flex h-full w-full animate-ping-slow rounded-full bg-red-500 opacity-50"></span>
+                    </span>
                 )}
             </button>
 
@@ -743,18 +662,20 @@ function Weather() {
                             {aerodrome}
                         </button>
                         <span className={`px-2 py-0.5 rounded text-vs font-bold ${
-                            decoded.flightRules === 'VFR'
+                            fltCat === 'VFR'
                                 ? 'bg-theme-success-light text-theme-success border border-theme-border-soft font-semibold'
-                                : decoded.flightRules === 'IFR'
+                                : fltCat === 'IFR' || fltCat === 'LIFR'
                                 ? 'bg-theme-error-light text-theme-error border border-theme-border-soft font-semibold'
-                                : 'bg-blue-100 text-blue-800'
+                                : fltCat === 'MVFR'
+                                ? 'bg-blue-100 text-blue-700'
+                                : 'bg-theme-bg text-theme-text-muted border border-theme-border'
                         }`}>
-                            {decoded.flightRules}
+                            {fltCat}
                         </span>
                     </div>
                     <button
                         onClick={fetchWeather}
-                        className="text-theme-brand hover:text-theme-brand-light cursor-pointer font-medium text-vs flex items-center gap-1"
+                        className="text-theme-brand hover:text-theme-brand-light cursor-pointer text-vs flex items-center gap-1 font-semibold"
                         id="btn-refresh-weather"
                     >
                         <RefreshCw size={10} className={loading ? 'animate-spin' : ''} />
@@ -767,55 +688,55 @@ function Weather() {
                     {/* METAR Segment */}
                     <div className="p-4 space-y-2">
                         <div className="text-vs font-semibold text-theme-text-muted uppercase tracking-wider">
-                            METAR
+                            METAR {copied === 'metar' ? 'Copied' : null} 
                         </div>
-                        <div className="bg-theme-extra-light border border-theme-border rounded p-2 font-mono text-vs text-theme-text-dark leading-relaxed wrap-break-word">
-                            {metar}
-                        </div>
-                        
-                        {/* Decoded Items */}
-                        <div className="grid grid-cols-2 gap-2 text-vs pt-1">
-                            <div className="flex items-center gap-2 text-theme-text-main">
-                                <Wind size={14} className="text-theme-text-muted shrink-0" />
-                                <span>{decoded.wind}</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-theme-text-main">
-                                <Eye size={14} className="text-theme-text-muted shrink-0" />
-                                <span>{decoded.visibility}</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-theme-text-main">
-                                <Thermometer size={14} className="text-theme-text-muted shrink-0" />
-                                <span>{decoded.temp}</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-theme-text-main">
-                                <Compass size={14} className="text-theme-text-muted shrink-0" />
-                                <span>{decoded.altimeter}</span>
-                            </div>
+                        <div 
+                            onClick={() => copyToClipboard(metar, 'metar')}
+                            className="group relative bg-theme-extra-light border border-theme-border rounded p-2 pr-6 font-mono text-xs text-theme-text-dark leading-relaxed wrap-break-word">
+                                {metar}
+                                <div className="absolute h-full right-0 top-0 flex items-center pr-2">
+                                    <button
+                                        className="text-theme-text-muted group-hover:text-theme-brand transition-colors duration-300 py-1 inline-flex items-center gap-2"
+                                        aria-label="Copy METAR"
+                                    >
+                                        <CopyIcon size={14} />
+                                    </button>
+                                </div>
                         </div>
                     </div>
 
                     {/* TAF Segment */}
                     <div className="p-4 space-y-2">
                         <div className="text-vs font-semibold text-theme-text-muted uppercase tracking-wider">
-                            TAF
+                            TAF {copied === 'taf' ? 'Copied' : null} 
                         </div>
                         
                         {formattedTafLines.length > 0 ? (
-                            <div className="bg-theme-extra-light border border-theme-border rounded p-2 font-mono text-vs text-theme-text-dark space-y-1 overflow-hidden">
-                                {formattedTafLines.map((line, index) => (
-                                    <div 
-                                        key={index} 
-                                        className={`leading-normal wrap-break-word ${
-                                            line.startsWith('TEMPO') || line.startsWith('PROB') 
-                                                ? 'text-amber-700 font-medium pl-2 border-l border-amber-300' 
-                                                : line.startsWith('BECMG') || line.startsWith('FM') 
-                                                ? 'text-blue-700 font-medium pl-2 border-l border-blue-300' 
-                                                : ''
-                                        }`}
+                            <div 
+                                onClick={() => copyToClipboard(taf, 'taf')}
+                                className="group relative bg-theme-extra-light border border-theme-border rounded p-2 pr-6 font-mono text-xs text-theme-text-dark space-y-1 overflow-hidden">
+                                    {formattedTafLines.map((line, index) => (
+                                        <div 
+                                            key={index} 
+                                            className={`leading-normal wrap-break-word ${
+                                                line.startsWith('TEMPO') || line.startsWith('PROB') 
+                                                    ? 'text-amber-700 font-medium pl-2 border-l border-amber-300' 
+                                                    : line.startsWith('BECMG') || line.startsWith('FM') 
+                                                    ? 'text-blue-700 font-medium pl-2 border-l border-blue-300' 
+                                                    : ''
+                                            }`}
+                                        >
+                                            {line}
+                                        </div>
+                                    ))}
+                                <div className="absolute h-full right-0 top-0 flex items-center pr-2">
+                                    <button
+                                        className="text-theme-text-muted group-hover:text-theme-brand transition-colors duration-300 py-1 inline-flex items-center gap-2"
+                                        aria-label="Copy TAF"
                                     >
-                                        {line}
-                                    </div>
-                                ))}
+                                        <CopyIcon size={14} />
+                                    </button>
+                                </div>
                             </div>
                         ) : (
                             <div className="text-vs text-theme-text-muted italic">
@@ -831,7 +752,7 @@ function Weather() {
                         Source:{' '}
                         <button 
                             onClick={handleAerodromeChange}
-                            className="text-theme-brand hover:text-theme-brand-light font-semibold cursor-pointer underline transition-colors font-mono"
+                            className="text-theme-brand hover:text-theme-brand-light font-semibold cursor-pointer transition-colors font-mono"
                             title="Click to edit ICAO code"
                         >
                             {aerodrome}

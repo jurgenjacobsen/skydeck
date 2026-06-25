@@ -21,10 +21,11 @@ export default function Sidebar() {
                     SKYDECK
                 </div>
                 <div className="p-4 text-sm flex-col gap-1 flex">
-                    {links.map((link) => (
+                    {links.map((link, key) => (
                         <Link
                             to={link.path}
                             className="flex items-center gap-3 py-2 px-4 rounded font-medium hover:bg-theme-bg transition-all"
+                            key={key}
                         >
                             <link.icon size={18} className="text-theme-text-muted"/>
                             {link.name}
